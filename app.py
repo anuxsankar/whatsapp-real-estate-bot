@@ -66,14 +66,14 @@ def webhook():
             msg.body("Reply with 1 (Rent) or 2 (Buy).")
 
     elif step == 4:
-    type_map = {"1": "1BHK", "2": "2BHK", "3": "3BHK+"}
-    if incoming_msg in type_map:
-        user["type"] = type_map[incoming_msg]
+        type_map = {"1": "1BHK", "2": "2BHK", "3": "3BHK+"}
+        if incoming_msg in type_map:
+            user["type"] = type_map[incoming_msg]
 
-        try:
-            write_to_sheet(sender, user)
-        except Exception as e:
-            print(f"⚠️ Failed to write to Google Sheets: {e}")
+            try:
+                write_to_sheet(sender, user)
+            except Exception as e:
+                print(f"⚠️ Failed to write to Google Sheets: {e}")
 
         summary = (
             f"🎉 Thanks! Here's what you shared:\n"
