@@ -31,6 +31,13 @@ def webhook():
     resp = MessagingResponse()
     msg = resp.message()
 
+    if incoming_msg in ["reset", "restart"]:
+        user_data.pop(sender, None)
+        msg.body("🔄 Session reset! Let’s start over.\n\n💸 What's your budget?\n1. ₹15K–₹25K\n2. ₹25K–₹35K\n3. ₹35K–₹50K")
+        user_data[sender] = {"step": 1}
+        return str(resp)
+
+
     user = user_data.get(sender, {"step": 0})
     step = user["step"]
 
