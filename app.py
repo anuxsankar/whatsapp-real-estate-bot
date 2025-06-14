@@ -66,28 +66,29 @@ def webhook():
             msg.body("Reply with 1 (Rent) or 2 (Buy).")
 
     elif step == 4:
-        type_map = {"1": "1BHK", "2": "2BHK", "3": "3BHK+"}
-      if incoming_msg in type_map:
-    user["type"] = type_map[incoming_msg]
+    type_map = {"1": "1BHK", "2": "2BHK", "3": "3BHK+"}
+    if incoming_msg in type_map:
+        user["type"] = type_map[incoming_msg]
 
-    try:
-        write_to_sheet(sender, user)
-    except Exception as e:
-        print(f"⚠️ Failed to write to Google Sheets: {e}")
+        try:
+            write_to_sheet(sender, user)
+        except Exception as e:
+            print(f"⚠️ Failed to write to Google Sheets: {e}")
 
-    summary = (
-        f"🎉 Thanks! Here's what you shared:\n"
-        f"Budget: {user['budget']}\n"
-        f"Location: {user['location']}\n"
-        f"Looking to: {user['intent']}\n"
-        f"Home type: {user['type']}\n\n"
-        "We'll get back to you with options soon! 🏡"
-    )
-    msg.body(summary)
-    user_data.pop(sender)
+        summary = (
+            f"🎉 Thanks! Here's what you shared:\n"
+            f"Budget: {user['budget']}\n"
+            f"Location: {user['location']}\n"
+            f"Looking to: {user['intent']}\n"
+            f"Home type: {user['type']}\n\n"
+            "We'll get back to you with options soon! 🏡"
+        )
+        msg.body(summary)
+        print(f"📥 New lead from {sender}: {user}")
+        user_data.pop(sender)
+    else:
+        msg.body("Please reply with 1, 2, or 3 for home type.")
 
-        else:
-            msg.body("Please reply with 1, 2, or 3 for home type.")
 
     user_data[sender] = user
     return str(resp)
