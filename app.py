@@ -1,8 +1,28 @@
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+from datetime import datetime
 
 app = Flask(__name__)
 user_data = {}
+
+def write_to_sheet(phone, user):
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
+    client = gspread.authorize(creds)
+
+    sheet = client.open("Real Estate Leads").sheet1
+
+    sheet.append_row([
+        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        phone,
+        user.get("budget", ""),
+        user.get("location", ""),
+        user.get("intent", ""),
+        user.get("type", "")
+    ])
+
 
 @app.route("/webhook", methods=['POST'])
 def webhook():
@@ -49,6 +69,8 @@ def webhook():
         type_map = {"1": "1BHK", "2": "2BHK", "3": "3BHK+"}
         if incoming_msg in type_map:
             user["type"] = type_map[incoming_msg]
+            write_to_sheet(sender, user)
+
             summary = (
                 f"🎉 Thanks! Here's what you shared:\n"
                 f"Budget: {user['budget']}\n"
